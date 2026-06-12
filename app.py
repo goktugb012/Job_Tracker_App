@@ -1,9 +1,14 @@
 import streamlit as st
+import pandas as pd
+import os
+
+
+
+
 
 st.title("Job Application Tracker")
-st.write("Tracker")
 
-st.subheader("Applications")
+st.subheader("Application Details")
 
 company = st.text_input("Company Name")
 position = st.text_input("Position")
@@ -17,4 +22,31 @@ status = st.selectbox(
     "Application Status", ["Applied", "Interview", "Rejected", "Offer"])
 
 if st.button("Submit Application"):
-    st.success(f"{company} şirketindeki {position} pozisyonu eklendi.")
+
+    new_application = pd.DataFrame([{
+        "Company": company,
+        "Position": position,
+        "Salary": salary,
+        "Home Office": home_office,
+        "Status": status
+    }])
+
+    if os.path.exists("applications.csv"):
+        new_application.to_csv(
+            "applications.csv",
+            mode="a",
+            header=False,
+            index=False
+        )
+
+    else:
+        new_application.to_csv(
+            "applications.csv",
+            index=False
+        )
+
+    st.success("Application saved.")
+
+st.subheader("Saved Applications")
+if st.button("View Applications"):
+    st.switch_page("pages/1_Applications.py")
